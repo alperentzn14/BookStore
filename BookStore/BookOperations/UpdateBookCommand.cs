@@ -9,24 +9,24 @@ namespace BookStore.BookOperations
 {
     public class UpdateBookCommand
     {
+        public UpdateBookModel Model { get; set; }
+        public int bookId { get; set; }
         private readonly BookStoreDbContext _dbContext;
         public UpdateBookCommand(BookStoreDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public void Handle(int id, [FromBody] Book updateBook)
+        public void Handle()
         {
-            var book = _dbContext.Books.SingleOrDefault(x => x.Id == id);
+            var book = _dbContext.Books.SingleOrDefault(x => x.Id == bookId);
             if (book is null)
             {
-                throw new InvalidOperationException("Kitap Güncellenemedi");
+                throw new InvalidOperationException("Güncellenecek Kitap Bulunamadı");
             }
-            book.GenreId = updateBook.GenreId != default ? updateBook.GenreId : book.GenreId;
-            book.PageCount = updateBook.PageCount != default ? updateBook.PageCount : book.PageCount;
-            book.PublishDate = updateBook.PublishDate != default ? updateBook.PublishDate : book.PublishDate;
-            book.Title = updateBook.Title != default ? updateBook.Title : book.Title;
-            book.Name = updateBook.Name != default ? updateBook.Name : book.Name;
+            book.GenreId = Model.GenreId != default ? Model.GenreId : book.GenreId;
+            book.Title = Model.Title != default ? Model.Title : book.Title;
+            book.Name = Model.Name != default ? Model.Name : book.Name;
             _dbContext.SaveChanges();
 
         }
@@ -36,8 +36,6 @@ namespace BookStore.BookOperations
             public string Name { get; set; }
             public string Title { get; set; }
             public int GenreId { get; set; }
-            public int PageCount { get; set; }
-            public string PublishDate { get; set; }
         }
     }
 }
