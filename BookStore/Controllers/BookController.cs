@@ -1,5 +1,10 @@
-﻿using BookStore.BookOperations;
+﻿using AutoMapper;
+using BookStore.BookOperations;
+using BookStore.BookOperations.CreateBook;
+using BookStore.BookOperations.DeleteBook;
 using BookStore.DbOperations;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,16 +22,18 @@ namespace BookStore.Controllers
 
 
         private readonly BookStoreDbContext _context;
+        private readonly IMapper _mapper;
 
-        public BookController(BookStoreDbContext context)
+        public BookController(BookStoreDbContext context , IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult GetBooks()
         {
-            GetBooksQuery query = new GetBooksQuery(_context);
+            GetBooksQuery query = new GetBooksQuery(_context,_mapper);
             var result = query.Handle();
             return Ok(result);
         }
@@ -37,7 +44,7 @@ namespace BookStore.Controllers
             BookDetailViewModel result;
             try
             {
-                GetBooksDetailQuery query = new GetBooksDetailQuery(_context);
+                GetBooksDetailQuery query = new GetBooksDetailQuery(_context,_mapper);
                 query.bookId = id;
                 result=query.Handle();
             }
@@ -54,11 +61,16 @@ namespace BookStore.Controllers
         [HttpPost]
         public IActionResult AddBook([FromBody] CreateBookModel newBook)
         {
-            CreateBookCommand command = new CreateBookCommand(_context);
+            CreateBookCommand command = new CreateBookCommand(_context,_mapper);
             try
             {
                 command.Model = newBook;
+
+                CreateBookCommandValidator validator = new CreateBookCommandValidator();
+                //if validation error throw Message else command.handle()
+                validator.ValidateAndThrow(command);
                 command.Handle();
+
             }
             catch (Exception ex)
             {
@@ -101,7 +113,11 @@ namespace BookStore.Controllers
             {
 
                 DeleteBookCommand command = new DeleteBookCommand(_context);
+
                 command.bookId = id;
+
+                DeleteBookCommandValidator validator = new DeleteBookCommandValidator();
+                validator.ValidateAndThrow(command);
                 command.Handle();
 
             }
