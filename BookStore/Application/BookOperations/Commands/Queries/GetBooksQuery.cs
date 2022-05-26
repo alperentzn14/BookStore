@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookStore.Common;
 using BookStore.DbOperations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace BookStore.BookOperations
 
         public List<BookViewModel> Handle()
         {
-            var bookList = _dbContext.Books.OrderBy(x => x.Id).ToList<Book>();
+            var bookList = _dbContext.Books.Include(x=>x.Genre).OrderBy(x => x.Id).ToList<Book>();
             List<BookViewModel> vm = _mapper.Map<List<BookViewModel>>(bookList);
        
             return vm;

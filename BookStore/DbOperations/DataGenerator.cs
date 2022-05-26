@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BookStore.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,25 @@ namespace BookStore.DbOperations
                 {
                     return;
                 }
-                context.Books.AddRange(
+
+
+                context.Genres.AddRange(
+                        new Genre
+                        {
+                            //Id=1,
+                          
+                            Name = "BlackList"
+                        },
+                            new Genre
+                            {
+                                //Id=2,
+
+                                Name = "test"
+
+                            }
+                        );
+
+            context.Books.AddRange(
                 
                             new Book
             {

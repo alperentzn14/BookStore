@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookStore.Common;
 using BookStore.DbOperations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace BookStore.BookOperations
 
         public BookDetailViewModel Handle()
         {
-            var book = _dbContext.Books.Where(book => book.Id == bookId).SingleOrDefault();
+            var book = _dbContext.Books.Include(x=>x.Genre).Where(book => book.Id == bookId).SingleOrDefault();
             if(book is null)
             {
                 throw new InvalidOperationException("Kitap Bulunamadı");
