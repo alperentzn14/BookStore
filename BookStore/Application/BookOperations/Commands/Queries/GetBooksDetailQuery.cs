@@ -32,9 +32,6 @@ namespace BookStore.BookOperations
             }
             BookDetailViewModel vm = _mapper.Map<Book, BookDetailViewModel>(book);
           
-
-
-
             return vm;
         }
     }

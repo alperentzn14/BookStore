@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BookStore.Application.BookOperations.Commands.Queries;
+using BookStore.Application.BookOperations.Commands.UpdateBook;
 using BookStore.BookOperations;
 using BookStore.BookOperations.CreateBook;
 using BookStore.BookOperations.DeleteBook;
@@ -46,7 +48,9 @@ namespace BookStore.Controllers
             {
                 GetBooksDetailQuery query = new GetBooksDetailQuery(_context,_mapper);
                 query.bookId = id;
-                result=query.Handle();
+                GetBooksDetailQueryValidator validator = new GetBooksDetailQueryValidator();
+                validator.ValidateAndThrow(query);
+                result =query.Handle();
             }
             catch (Exception ex)
             {
@@ -93,6 +97,8 @@ namespace BookStore.Controllers
                 UpdateBookCommand command = new UpdateBookCommand(_context);
                 command.bookId = id;
                 command.Model = updateBook;
+                UpdateBookCommandValidator validator = new UpdateBookCommandValidator();
+                validator.ValidateAndThrow(command);
                 command.Handle();
 
             }
