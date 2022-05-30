@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using BookStore.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
@@ -15,9 +16,11 @@ namespace BookStore.Middlewares
     {
         //Log middleware , request , Response 
         private readonly RequestDelegate _next;
-        public CustomExceptionMiddleware(RequestDelegate next)
+        private readonly ILoggerService _loggerService; 
+        public CustomExceptionMiddleware(RequestDelegate next,ILoggerService loggerService)
         {
             _next = next;
+            _loggerService = loggerService;
         }
         public async Task Invoke (HttpContext context)
         {
@@ -26,15 +29,15 @@ namespace BookStore.Middlewares
             {
                
                 string message = "[Request] HTTP " + context.Request.Method + " - " + context.Request.Path;
-                Console.WriteLine(message);
+                _loggerService.Write(message);
                 await _next(context);
                 wacth.Stop();
 
 
                 message = "[Response] HTTP " + context.Request.Method + " - " + context.Request.Path + " responed " + context.Response.StatusCode + " in " + wacth
                     .Elapsed.TotalMilliseconds + "ms";
-                Console.WriteLine(message);
-                await _next(context);
+                _loggerService.Write(message);
+                //await _next(context);
             }
             catch (Exception ex)
             {
@@ -49,8 +52,8 @@ namespace BookStore.Middlewares
             context.Response.ContentType = "application/Json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             string message = "[Error] HTTP =" + context.Request.Method + "-" + context.Response.StatusCode + "Error Message" + ex.Message + "in" + wacth.Elapsed.TotalMilliseconds + "ms";
-            Console.WriteLine(message);
-        
+            _loggerService.Write(message);
+
             var result = JsonConvert.SerializeObject(new { error = ex.Message }, Formatting.None);
             return context.Response.WriteAsync(result);
    

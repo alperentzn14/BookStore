@@ -11,6 +11,7 @@ namespace BookStore.Application.GenreOperations.Commands.CreateGenre
         public CreateGenreCommandValidator()
         {
             RuleFor(command => command.Model.Name).NotEmpty().MinimumLength(4);
+        
         }
     }
 }

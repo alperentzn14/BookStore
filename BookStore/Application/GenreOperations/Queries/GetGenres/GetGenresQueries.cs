@@ -9,10 +9,10 @@ namespace BookStore.Application.GenreOperations.Queries.GetGenres
 {
     public class GetGenresQueries
     {
-        private readonly BookStoreDbContext _dbContext;
+        private readonly IBookStoreDbContext _dbContext;
 
         private readonly IMapper _mapper;
-        public GetGenresQueries(BookStoreDbContext dbContext, IMapper mapper)
+        public GetGenresQueries(IBookStoreDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
